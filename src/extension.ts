@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import * as fs from 'fs';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -12,9 +13,22 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('trial-extension.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
+    // The commandId parameter must match the command field in package.json
+    vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
+        if (document.languageId === "yourid" && document.uri.scheme === "file") {}
+        vscode.window.showInformationMessage('Saved trial-extension!');
+        console.log('onDidSaveTextDocument');
+    });
+
+	let disposable = vscode.commands.registerCommand('trial-extension.helloWorld', async () => {
+        // The code you place here will be executed every time your command is executed
+
+        if (!vscode.window.activeTextEditor) return;
+
+        const currentFilePath = vscode.window.activeTextEditor.document.uri.fsPath;
+        const content = await fs.readFileSync(currentFilePath, 'utf-8');
+        console.log('1. content');
+        console.log(content);
 
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from trial-extension!');
